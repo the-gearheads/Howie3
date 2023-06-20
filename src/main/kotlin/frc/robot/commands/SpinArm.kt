@@ -7,17 +7,18 @@ import edu.wpi.first.wpilibj.Joystick
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.math.MathUtil
 import frc.robot.subsystems.Drive
+import frc.robot.subsystems.ArmSpinner
 
-const val DEADBAND = 0.02
-
-class TeleopDrive(val drive: Drive, val joy: XboxController): CommandBase() {
+class SpinArm(val armSpinner: ArmSpinner, val joy: XboxController): CommandBase() {
 
     init {
-      addRequirements(drive)
-      drive.drive(0.0, 0.0)
+      addRequirements(armSpinner)
+      armSpinner.spin(0.0)
     }
 
     override fun execute() {
-      drive.drive(MathUtil.applyDeadband(-joy.getLeftY() * 0.5, DEADBAND), MathUtil.applyDeadband(-joy.getLeftX() * 0.5, DEADBAND))
+
+      armSpinner.spin(joy.getRightY() * 0.6)
+      
     }
 }
