@@ -32,8 +32,6 @@ class Drive: SubsystemBase {
 
     leftRear.follow(leftFront)
     rightRear.follow(rightFront)
-
-    this.defaultCommand = TeleopDrive(this, XboxController(1))
   }  
 
   public fun drive(x: Double, rot: Double) {

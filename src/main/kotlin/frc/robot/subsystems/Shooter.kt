@@ -1,11 +1,18 @@
 package frc.robot.subsystems
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import edu.wpi.first.wpilibj2.command.InstantCommand
+import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
+import edu.wpi.first.wpilibj2.command.WaitCommand
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.PneumaticsModuleType
+import edu.wpi.first.wpilibj.Compressor
 
 class Shooter: SubsystemBase{
     constructor():super()
+
+    val comp = Compressor(0, PneumaticsModuleType.CTREPCM)
 
     val extendSolenoids = arrayListOf(
         Solenoid(PneumaticsModuleType.CTREPCM, 1),
@@ -17,14 +24,19 @@ class Shooter: SubsystemBase{
     )
     
     init{
-        rest()
+        comp.enableDigital()
+        reset()
     }
 
 
 
-    public fun shoot(){
-        setExtendSolenoids(true)
+    public fun shoot(power: Int){
+        if(power > 3) return;
         setRetractSolenoids(false)
+        for (i in 0..power) {
+            extendSolenoids[i].set(true)
+        }
+
     }
 
     public fun retract(){
@@ -32,7 +44,7 @@ class Shooter: SubsystemBase{
         setRetractSolenoids(true)
     }
 
-    public fun rest(){
+    public fun reset(){
         setExtendSolenoids(false)
         setRetractSolenoids(false)
     }
@@ -47,4 +59,24 @@ class Shooter: SubsystemBase{
             retractSolenoid.set(isOn)
         }
     }
+
+    public fun getShootCommand(arm: Arms, power: Int): Command{
+        return SequentialCommandGroup(
+            InstantCommand(arm::release),
+            WaitCommand(0.6),
+            InstantCommand({this.shoot(power)}),
+        )
+    }
+
+    public fun getShootReleaseCommand(arm: Arms): Command {
+        return SequentialCommandGroup(
+            WaitCommand(0.2),
+            InstantCommand(arm::catch),
+            InstantCommand(this::retract),
+            WaitCommand(0.2),
+            InstantCommand(this::reset)
+        )
+
+    }
+
 }

@@ -18,7 +18,7 @@ class Arms: SubsystemBase{
 
 
     init{
-        rest()
+        catch()
     }
 
     public fun catch(){
