@@ -3,12 +3,13 @@ package frc.robot.subsystems
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.commands.TeleopDrive
 
 class Drive: SubsystemBase {
@@ -22,6 +23,11 @@ class Drive: SubsystemBase {
   private val diff = DifferentialDrive(leftFront, rightFront)
 
   init {
+    leftFront.setCANTimeout(250);
+    rightFront.setCANTimeout(250);
+    leftRear.setCANTimeout(250);
+    rightRear.setCANTimeout(250);
+
     leftFront.restoreFactoryDefaults()
     leftRear.restoreFactoryDefaults()
     rightFront.restoreFactoryDefaults()
@@ -32,6 +38,12 @@ class Drive: SubsystemBase {
 
     leftRear.follow(leftFront)
     rightRear.follow(rightFront)
+
+
+    leftFront.setCANTimeout(0);
+    rightFront.setCANTimeout(0);
+    leftRear.setCANTimeout(0);
+    rightRear.setCANTimeout(0);
   }  
 
   public fun drive(x: Double, rot: Double) {
