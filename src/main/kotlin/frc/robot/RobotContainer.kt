@@ -20,7 +20,7 @@ class RobotContainer {
   val armSpinner = ArmSpinner()
 
   init {
-    val joy = XboxController(0)
+    val joy = XboxController(1)
     JoystickButton(joy, 1)
     .onTrue(shooter.getShootCommand(arms, 0))
     .onFalse(shooter.getShootReleaseCommand(arms))
