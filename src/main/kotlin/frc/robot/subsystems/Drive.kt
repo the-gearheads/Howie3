@@ -4,21 +4,23 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.commands.TeleopDrive
+import com.revrobotics.spark.SparkMax
+import com.revrobotics.spark.SparkLowLevel.MotorType
+import com.revrobotics.spark.config.SparkMaxConfig
+import com.revrobotics.spark.SparkBase.ResetMode
+import com.revrobotics.spark.SparkBase.PersistMode
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode
 
 class Drive: SubsystemBase {
   constructor(): super()
 
-  private val leftFront = CANSparkMax(2, MotorType.kBrushless)
-  private val leftRear = CANSparkMax(3, MotorType.kBrushless)
-  private val rightFront = CANSparkMax(4, MotorType.kBrushless)
-  private val rightRear = CANSparkMax(5, MotorType.kBrushless)
+  private val leftFront = SparkMax(2, MotorType.kBrushless)
+  private val leftRear = SparkMax(3, MotorType.kBrushless)
+  private val rightFront = SparkMax(4, MotorType.kBrushless)
+  private val rightRear = SparkMax(5, MotorType.kBrushless)
  
   private val diff = DifferentialDrive(leftFront, rightFront)
 
@@ -28,17 +30,24 @@ class Drive: SubsystemBase {
     leftRear.setCANTimeout(250);
     rightRear.setCANTimeout(250);
 
-    leftFront.restoreFactoryDefaults()
-    leftRear.restoreFactoryDefaults()
-    rightFront.restoreFactoryDefaults()
-    rightRear.restoreFactoryDefaults()
+    val commonConfig = SparkMaxConfig();
+    commonConfig.idleMode(IdleMode.kCoast);
 
-    rightFront.setInverted(true)
-    rightRear.setInverted(true)
+    val lfConfig = SparkMaxConfig().apply(commonConfig);
+    val lrConfig = SparkMaxConfig().apply(commonConfig);
+    val rfConfig = SparkMaxConfig().apply(commonConfig);
+    val rrConfig = SparkMaxConfig().apply(commonConfig);
+    
+    rfConfig.inverted(true);
+    rrConfig.inverted(true);
 
-    leftRear.follow(leftFront)
-    rightRear.follow(rightFront)
+    lrConfig.follow(leftFront);
+    rrConfig.follow(rightFront);
 
+    leftFront.configure(lfConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    leftRear.configure(lrConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    rightFront.configure(rfConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    rightRear.configure(rrConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     leftFront.setCANTimeout(0);
     rightFront.setCANTimeout(0);

@@ -1,13 +1,15 @@
 plugins {
     id "java"
-    id "org.jetbrains.kotlin.jvm" version "1.8.20"
-    id "edu.wpi.first.GradleRIO" version "2024.3.2"
+    id "edu.wpi.first.GradleRIO" version "2025.3.1"
+    id "org.jetbrains.kotlin.jvm" version "2.1.21"
+
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
+
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -44,6 +46,8 @@ deploy {
                 frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
                     files = project.fileTree('src/main/deploy')
                     directory = '/home/lvuser/deploy'
+                    deleteOldFiles = false // Change to true to delete files on roboRIO that no
+                                           // longer exist in deploy directory of this project
                 }
             }
         }
@@ -56,11 +60,12 @@ def deployArtifact = deploy.targets.roborio.artifacts.frcJava
 wpi.java.debugJni = false
 
 // Set this to true to enable desktop support.
-def includeDesktopSupport = true
+def includeDesktopSupport = false
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 5.
 dependencies {
+    annotationProcessor wpi.java.deps.wpilibAnnotations()
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
 

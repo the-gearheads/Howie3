@@ -7,14 +7,13 @@ import edu.wpi.first.wpilibj.XboxController
 
 class ArmSpinner: SubsystemBase{
 
-    constructor():super()
+    constructor(): super()
     val spinMotor = Spark(0)
 
     init{
+
     }
 
-
-   
     public fun spin(effort: Double){
         spinMotor.set(effort)
     }
