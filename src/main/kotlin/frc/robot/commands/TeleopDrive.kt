@@ -21,7 +21,7 @@ class TeleopDrive(val drive: Drive, val joy: XboxController, val arm: ArmSpinner
     }
 
     override fun execute() {
-      drive.drive(MathUtil.applyDeadband(-joy.leftY * 0.5, DEADBAND), MathUtil.applyDeadband(-joy.leftX * 0.5, DEADBAND))
+      drive.drive(MathUtil.applyDeadband(-joy.leftY * 0.75, DEADBAND), MathUtil.applyDeadband(-joy.leftX * 0.75, DEADBAND))
       val spin = MathUtil.applyDeadband(joy.rightY, DEADBAND)
       arm.spin(spin)
     }
